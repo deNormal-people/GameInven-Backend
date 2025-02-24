@@ -24,7 +24,10 @@ jobs:
 
     - name: Build with Maven (Skip Tests)
       run: mvn clean package -DskipTests
-
+      
+    - name: Rename WAR file to app.war
+      run: mv target/*.war target/app.war
+      
     - name: Upload WAR file to Server via SCP
       uses: appleboy/scp-action@v0.1.4
       with:
@@ -32,16 +35,6 @@ jobs:
         port: 20
         username: ${{ secrets.SSH_USER }}
         password: ${{ secrets.SSH_PASSWORD }}
-        source: "target/*.war"
-        target: "/opt/tomcat/webapps/app.war"
-
-    - name: Restart Tomcat Server via SSH
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        port: 20
-        username: ${{ secrets.SSH_USER }}
-        password: ${{ secrets.SSH_PASSWORD }}
-        script: |
-          sudo systemctl restart tomcat
+        source: "target/app.war"
+        target: "/opt/tomcat/webapps/"
 
