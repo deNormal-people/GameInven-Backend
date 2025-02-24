@@ -23,6 +23,8 @@ jobs:
       run: mvn clean package
 
     - name: Deploy to Tomcat
+      env:
+        TOMCAT_PASSWORD: ${{ secrets.TOMCAT_PASSWORD}}
       run: |
-        curl -v --user "admin:admin_password" --upload-file target/*.war \
+        curl -v --user "admin:$TOMCAT_PASSWORD" --upload-file target/*.war \
         "http://58.78.52.20:8888/manager/text/deploy?path=/your-app-name&update=true"
