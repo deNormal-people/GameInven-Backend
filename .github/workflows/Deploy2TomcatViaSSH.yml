@@ -39,3 +39,7 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD }}
         script: |
           sudo systemctl restart tomcat
+
+    - name: Create application.yml
+      run: |
+        echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > src/main/resources/application.yml
