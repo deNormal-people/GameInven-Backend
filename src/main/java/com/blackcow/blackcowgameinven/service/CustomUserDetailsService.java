@@ -22,13 +22,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username);
         if(user == null) new UsernameNotFoundException("User not found with username: " + username);
 
-        String roles = "USER";
+        String roles = user.getRole();
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
-                .authorities(roles)
-                .authorities(new SimpleGrantedAuthority(roles))
+                .authorities(new SimpleGrantedAuthority(roles))     //authories를 써야 "ROLE_"이 안붙음
                 .build();
     }
 }
