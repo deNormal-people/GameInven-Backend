@@ -9,18 +9,14 @@ import com.blackcow.blackcowgameinven.service.UserServcie;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 
 @Slf4j
 @RestController
@@ -48,7 +44,7 @@ public class AuthenticationController {
                             .build()
             );
         }catch (BadCredentialsException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.builder().toString());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.builder("인증오류").build().toString());
         }
     }
 
@@ -57,7 +53,7 @@ public class AuthenticationController {
 
         String refreshToken = jwtToken.getRefreshToken();
 
-        if (jwtService.validateToken(refreshToken)) {
+        if (jwtService.getValidateToken(refreshToken) != null) {
             String id = jwtService.getUsernameFromToken(refreshToken);
             UserDetails userDetails = userServcie.loadUserByUsername(id);
 
