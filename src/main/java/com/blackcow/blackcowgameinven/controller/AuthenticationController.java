@@ -1,5 +1,6 @@
 package com.blackcow.blackcowgameinven.controller;
 
+import com.blackcow.blackcowgameinven.dto.ApiResponse;
 import com.blackcow.blackcowgameinven.dto.JwtToken;
 import com.blackcow.blackcowgameinven.dto.LoginDTO;
 import com.blackcow.blackcowgameinven.dto.UserDTO;
@@ -47,7 +48,7 @@ public class AuthenticationController {
                             .build()
             );
         }catch (BadCredentialsException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("ID 혹은 PW 검증 불가");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.builder().toString());
         }
     }
 
