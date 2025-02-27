@@ -44,7 +44,7 @@ public class AuthenticationController {
                             .build()
             );
         }catch (BadCredentialsException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.builder("인증오류").build().toString());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.builder("인증오류").build());
         }
     }
 
@@ -63,15 +63,15 @@ public class AuthenticationController {
             return ResponseEntity.ok(new JwtToken(newAccessToken, refreshToken));
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("만료된 토큰입니다.");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.builder("만료된 토큰입니다.").build());
     }
 
     @PostMapping("/dupl")
     public ResponseEntity<?> dupleCheck(@RequestBody String username){
         if(!userServcie.duplicationCheck(username)){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 계정");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.builder("중복된 계정").build());
         }
-        return ResponseEntity.ok("사용가능한 게정");
+        return ResponseEntity.ok(ApiResponse.builder("사용가능한 게정").build());
     }
 
     @PostMapping("signup")
@@ -80,9 +80,11 @@ public class AuthenticationController {
             userServcie.createuser(userDTO);
         }catch (Exception ex){
             log.error(ex.getMessage());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("중복계정 오류");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.builder("중복계정 오류").build());
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(userDTO.getUsername());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.<String>builder("회원가입 성공")
+                .data(userDTO.getUsername())
+                .build());
     }
     
 }
