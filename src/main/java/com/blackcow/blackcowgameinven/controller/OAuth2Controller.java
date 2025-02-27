@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/login/oauth2")
 public class OAuth2Controller {
 
-    @PostMapping("/login")
+    @PostMapping("/google")
     public ResponseEntity<ApiResponse> oAuth2Login(@RequestBody LoginDTO loginDTO) throws Exception {
 
         //로그인 성공시

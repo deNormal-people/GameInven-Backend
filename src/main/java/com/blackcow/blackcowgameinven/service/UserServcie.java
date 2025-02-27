@@ -21,12 +21,12 @@ public class UserServcie {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public UserDetails loadUserByUsername(String username) {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
-        if (user == null) {
+        if (user != null) {
             return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>());
         }
-        return null;
+        throw new UsernameNotFoundException(username);
     }
 
     /***
