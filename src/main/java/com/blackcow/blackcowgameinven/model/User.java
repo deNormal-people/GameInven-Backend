@@ -16,12 +16,18 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)         //auto increment
     private int seq;
 
+    /**
+     * 이메일 방식
+     */
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
     @Column(name = "password", nullable = false)
     private String password;
 
+    /**
+     * 실제 메일을 받아볼 이메일
+     */
     @Column
     private String email;
 

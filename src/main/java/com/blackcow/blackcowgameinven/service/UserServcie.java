@@ -21,6 +21,9 @@ public class UserServcie {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    private final String emailPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$";
+    private final String phonePattern = "^010-\\d{3,4}-\\d{4}$";
+
     public UserDetails loadUserByUsername(String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -55,4 +58,21 @@ public class UserServcie {
         userRepository.save(newUser);
     }
 
+    /**
+     * 이메일 형식에 맞는지 검사
+     * @param username
+     * @return
+     */
+    public boolean isValidEmail(String username) {
+        return username.matches(emailPattern);
+    }
+
+    /**
+     * 핸드폰 번호 형식에 맞는지 검사(하이폰 포함)
+     * @param phone
+     * @return
+     */
+    public boolean isValidPhone(String phone) {
+        return phone.matches(phonePattern);
+    }
 }
