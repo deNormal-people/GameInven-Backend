@@ -76,6 +76,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String tokenJson = JsonUtil.toJson(tonkens);
         String encodedTokenJson = URLEncoder.encode(tokenJson, StandardCharsets.UTF_8);
 
+        //프런트 리다이렉션 URL
         response.sendRedirect("http://localhost:3000?token=" + encodedTokenJson);
 
         super.onAuthenticationSuccess(request, response, authentication);
