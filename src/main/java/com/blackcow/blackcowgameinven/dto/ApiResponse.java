@@ -3,17 +3,18 @@ package com.blackcow.blackcowgameinven.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
-@ToString
+@Getter  // JSON 변환을 위해 Getter 추가
+@NoArgsConstructor(access = AccessLevel.PROTECTED)  // Jackson 직렬화 문제 해결
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ApiResponse<T> {
 
     private String message;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)      //null이면 JSON에서 제외
+    @JsonInclude(JsonInclude.Include.NON_NULL)  // null 값일 경우 JSON 변환에서 제외
     private T data;
 
-    //message 값 필수로 받기위해서 @Builder 사용대신 직접 생성
-    public static class Builder<T>{
+    // message 값 필수로 받기위해 @Builder 대신 직접 Builder 구현
+    public static class Builder<T> {
         private final String message;
         private T data;
 
@@ -31,16 +32,13 @@ public class ApiResponse<T> {
         }
     }
 
-    //생성자 직접 호출금지
-    private ApiResponse() {}            
-
+    // Builder 패턴을 위한 private 생성자
     private ApiResponse(Builder<T> builder) {
         this.message = builder.message;
         this.data = builder.data;
     }
 
-    public static <T> Builder<T> builder(String message){
+    public static <T> Builder<T> builder(String message) {
         return new Builder<>(message);
     }
-
 }
