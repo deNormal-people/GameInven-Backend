@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = getJwtFromRequest(request);
 
-            if (StringUtils.hasText(jwt) && jwtService.validateToken(jwt)) {
+            if (StringUtils.hasText(jwt) && jwtService.getValidateToken(jwt) != null) {
                 String id = jwtService.getUsernameFromToken(jwt);
 
                 //아이디를 기반으로 사용자 정보를 DB에서 읽어옴

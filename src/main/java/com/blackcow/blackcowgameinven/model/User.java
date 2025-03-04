@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Builder
-@Table(name = "USER")
+@Table(name = "USER_ACCOUNT")
 public class User {
 
     @Id
@@ -33,4 +33,6 @@ public class User {
 
     @Column(name = "account_type")
     private int accountType;
+
+    private String role;
 }
