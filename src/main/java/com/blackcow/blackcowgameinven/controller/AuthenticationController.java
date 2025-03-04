@@ -5,7 +5,7 @@ import com.blackcow.blackcowgameinven.dto.JwtToken;
 import com.blackcow.blackcowgameinven.dto.LoginDTO;
 import com.blackcow.blackcowgameinven.dto.UserDTO;
 import com.blackcow.blackcowgameinven.service.JwtService;
-import com.blackcow.blackcowgameinven.service.UserServcie;
+import com.blackcow.blackcowgameinven.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ public class AuthenticationController {
     private JwtService jwtService;
 
     @Autowired
-    private UserServcie userServcie;
+    private UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginDTO loginDTO){
@@ -55,7 +55,7 @@ public class AuthenticationController {
 
         if (jwtService.getValidateToken(refreshToken) != null) {
             String id = jwtService.getUsernameFromToken(refreshToken);
-            UserDetails userDetails = userServcie.loadUserByUsername(id);
+            UserDetails userDetails = userService.loadUserByUsername(id);
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             String newAccessToken = jwtService.generateAccessToken(authentication);
@@ -66,9 +66,9 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.builder("만료된 토큰입니다.").build());
     }
 
-    @PostMapping("/dupl")
-    public ResponseEntity<?> dupleCheck(@RequestBody String username){
-        if(!userServcie.duplicationCheck(username)){
+    @PostMapping(value = "/dupl", produces = "application/json")
+    public ResponseEntity<?> dupleCheck(@RequestBody UserDTO userDTO) {
+        if(userService.duplicationCheck(userDTO.getUsername())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.builder("중복된 계정").build());
         }
         return ResponseEntity.ok(ApiResponse.builder("사용가능한 게정").build());
@@ -77,7 +77,7 @@ public class AuthenticationController {
     @PostMapping("signup")
     public ResponseEntity<?> signUp(@RequestBody UserDTO userDTO){
         try{
-            userServcie.createuser(userDTO);
+            userService.createuser(userDTO);
         }catch (Exception ex){
             log.error(ex.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.builder("중복계정 오류").build());

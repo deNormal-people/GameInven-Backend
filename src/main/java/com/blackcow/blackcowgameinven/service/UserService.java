@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 @Service
-public class UserServcie {
+public class UserService {
 
     @Autowired
     private UserRepository userRepository;
@@ -33,12 +33,12 @@ public class UserServcie {
      * 아이디 중복체크
      */
     public boolean duplicationCheck(String username){
-        return !userRepository.existsUserByUsername(username);
+        return userRepository.existsUserByUsername(username);
     }
 
     public void createuser(UserDTO userDTO) throws SQLException{
         //2차 중복검증
-        if(!duplicationCheck(userDTO.getUsername())){
+        if(duplicationCheck(userDTO.getUsername())){
             throw new RuntimeException("중복된 계정입니다.");
         }
 

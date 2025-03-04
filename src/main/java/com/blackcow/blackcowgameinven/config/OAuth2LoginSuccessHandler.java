@@ -3,14 +3,12 @@ package com.blackcow.blackcowgameinven.config;
 import com.blackcow.blackcowgameinven.dto.JwtToken;
 import com.blackcow.blackcowgameinven.dto.UserDTO;
 import com.blackcow.blackcowgameinven.service.JwtService;
-import com.blackcow.blackcowgameinven.service.UserServcie;
+import com.blackcow.blackcowgameinven.service.UserService;
 import com.blackcow.blackcowgameinven.util.JsonUtil;
 import com.blackcow.blackcowgameinven.util.RandomPasswordGenerator;
-import com.nimbusds.oauth2.sdk.util.JSONUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,12 +26,12 @@ import java.sql.SQLException;
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtService jwtService;
-    private final UserServcie userServcie;
+    private final UserService userService;
 
     @Autowired
-    public OAuth2LoginSuccessHandler(JwtService jwtService, UserServcie userServcie) {
+    public OAuth2LoginSuccessHandler(JwtService jwtService, UserService userService) {
         this.jwtService = jwtService;
-        this.userServcie = userServcie;
+        this.userService = userService;
     }
 
     @Override
@@ -45,11 +43,11 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         //기존 사용자 인지 조회
         try {
-            UserDetails userDetails = userServcie.loadUserByUsername(email);
+            UserDetails userDetails = userService.loadUserByUsername(email);
         }catch (UsernameNotFoundException unfe){
             try {
                 if(email != null) {
-                    userServcie.createuser(new UserDTO(email, RandomPasswordGenerator.generatePassword(), email, ""));
+                    userService.createuser(new UserDTO(email, RandomPasswordGenerator.generatePassword(), email, ""));
                 }else{
                     throw new UsernameNotFoundException("OAuth에서 E-mail 정보를 가져오지못함.");
                 }
