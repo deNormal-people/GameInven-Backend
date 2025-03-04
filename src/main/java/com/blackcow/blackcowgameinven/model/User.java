@@ -33,4 +33,6 @@ public class User {
 
     @Column(name = "account_type")
     private int accountType;
+
+    private String role;
 }
