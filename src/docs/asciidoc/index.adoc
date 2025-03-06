@@ -1,0 +1,23 @@
+= 🚀 GameInven API 명세서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectanchors:
+:sectnums:
+:snippets: ./target/generated-snippets
+:operation-http-request-title: 🔹 요청 예시
+:operation-http-response-title: 🔸 응답 예시
+
+== 🔒 계정 관리 API
+
+=== 📌 계정 중복 검사
+
+사용자 계정(ID 또는 이메일)이 중복되는지 확인 가능
+
+operation::Account duplicate check[snippets='http-request,http-response,request-body']
+
+=== 📌 로그인
+
+사용자 계정을 입력하여 Refresh Token과 Access Token을 가져온다.
