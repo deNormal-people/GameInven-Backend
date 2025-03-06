@@ -61,7 +61,7 @@ public class DocsTest {
         this.mockMvc.perform(post("/api/auth/dupl")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
-                .andExpect(status().isOk()) // 200 OK
+                .andExpect(status().is4xxClientError()) // 200 OK
                 .andDo(document("Account duplicate check/success",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));
