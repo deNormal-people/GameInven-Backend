@@ -11,18 +11,32 @@
 :operation-http-request-title: 🔹 요청 예시
 :operation-http-response-title: 🔸 응답 예시
 
+++++
+<style>
+#toc a {
+    color: #FFFFFF !important; /* 주황색 */
+    text-decoration: none;
+}
+#toc a:hover {
+    color: SKYBLUE !important; /* 호버 시 분홍색 */
+}
+</style>
+++++
+
 == 🔒 계정 관리 API
 
 ---
 
-=== 📌 로그인
+=== 로그인
 
 사용자 계정을 입력하여 Refresh Token과 Access Token을 가져온다.
 
 ---
 
-=== 📌 계정 중복 검사
-==== POST /api/v1/auth/duple
+=== 계정 중복 검사
+[NOTE]
+**METHOD**: `POST` +
+**URI**: /api/v1/auth/duple
 
 사용자 계정(ID 또는 이메일)이 중복되는지 확인 가능
 
@@ -30,7 +44,7 @@ operation::Account duplicate check/success[snippets="http-request,http-response"
 
 ---
 
-[NOTE]
+[WARNING]
 ====
 📌 **주의사항**
 
