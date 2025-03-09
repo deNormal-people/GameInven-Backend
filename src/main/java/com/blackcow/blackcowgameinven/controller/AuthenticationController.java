@@ -2,7 +2,6 @@ package com.blackcow.blackcowgameinven.controller;
 
 import com.blackcow.blackcowgameinven.dto.ApiResponse;
 import com.blackcow.blackcowgameinven.dto.JwtToken;
-import com.blackcow.blackcowgameinven.dto.LoginDTO;
 import com.blackcow.blackcowgameinven.dto.UserDTO;
 import com.blackcow.blackcowgameinven.service.JwtService;
 import com.blackcow.blackcowgameinven.service.UserService;
@@ -32,10 +31,10 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginDTO loginDTO){
+    @PostMapping(value = "/login", produces = "application/json")
+    public ResponseEntity<?> authenticateUser(@RequestBody UserDTO loginDTO){
         try{
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getId(), loginDTO.getPassword()));
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
 
             return ResponseEntity.ok(
                     JwtToken.builder()
