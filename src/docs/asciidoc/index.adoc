@@ -41,6 +41,7 @@
 사용자 계정(ID 또는 이메일)이 중복되는지 확인 가능
 
 operation::Account duplicate check/success[snippets="http-request,http-response"]
+operation::Account duplicate check/failed[snippets="http-response"]
 
 ---
 

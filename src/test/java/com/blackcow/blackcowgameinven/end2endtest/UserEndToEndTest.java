@@ -11,13 +11,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.beans.Transient;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -28,10 +25,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Rollback(true)
+@Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ExtendWith(RestDocumentationExtension.class)
-public class DocsTest {
+public class UserEndToEndTest {
 
     @Autowired
     private static MockMvc mockMvc;
@@ -50,19 +47,54 @@ public class DocsTest {
 
     @Test
     @DisplayName("중복체크 - 성공 응답")
-    @Order(2)
     public void 중복체크API_성공() throws Exception {
-        String requestBody = """
-            {
-            "username": "uniqueUser"
-            }
-            """;
+        String requestBody = "{\"username\": \"uniqueUser\"}";
+
 
         this.mockMvc.perform(post("/api/auth/dupl")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
-                .andExpect(status().is4xxClientError()) // 200 OK
+                .andExpect(status().isOk())             //200 OK
                 .andDo(document("Account duplicate check/success",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("중복체크 - 실패 응답")
+    public void 중복체크API_실패() throws Exception {
+        String requestBody = "{\"username\": \"duplicationUser\"}";
+
+        userRepository.save(User.builder().username("duplicationUser").password("duplicationUser").build());
+
+        this.mockMvc.perform(post("/api/auth/dupl")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isConflict())             //409 conflict
+                .andDo(document("Account duplicate check/failed",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("로그인 - 성공")
+    public void 로그인_성공() throws Exception {
+        String userName = "guest";
+
+        String requestBody = """
+                {
+                    "username": "guest",
+                    "password": "guest"
+                }
+                """;
+
+        userRepository.save(User.builder().username(userName).password(userName).build());
+
+        this.mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())             //409 conflict
+                .andDo(document("Account login/success",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));
     }
