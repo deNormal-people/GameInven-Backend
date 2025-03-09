@@ -1,7 +1,9 @@
 package com.blackcow.blackcowgameinven.end2endtest;
 
+import com.blackcow.blackcowgameinven.dto.UserDTO;
 import com.blackcow.blackcowgameinven.model.User;
 import com.blackcow.blackcowgameinven.repository.UserRepository;
+import com.blackcow.blackcowgameinven.service.UserService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +37,8 @@ public class UserEndToEndTest {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserService userService;
 
 
     @BeforeEach
@@ -88,13 +92,34 @@ public class UserEndToEndTest {
                 }
                 """;
 
-        userRepository.save(User.builder().username(userName).password(userName).build());
+        userService.createuser(new UserDTO(userName, userName, "",""));
 
         this.mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk())             //409 conflict
                 .andDo(document("Account login/success",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    @DisplayName("로그인 - 실패")
+    public void 로그인_실패() throws Exception {
+        String userName = "guest";
+
+        String requestBody = """
+                {
+                    "username": "guest",
+                    "password": "guest"
+                }
+                """;
+
+        this.mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isUnauthorized())             //401 UnAuthorized
+                .andDo(document("Account login/failed",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));
     }
