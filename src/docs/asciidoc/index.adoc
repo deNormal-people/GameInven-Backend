@@ -23,15 +23,32 @@
 </style>
 ++++
 
-== 🔒 계정 관리 API
-
----
+== 계정 관리 API
 
 === 로그인
+[NOTE]
+**METHOD**: 'POST' +
+**URI**: /api/v1/auth/login
 
 사용자 계정을 입력하여 Refresh Token과 Access Token을 가져온다.
 
----
+==== 🔹 요청 예시
+operation::Account login/success[snippets="http-request"]
+
+[tabs]
+======
+성공 응답::
++
+--
+operation::Account login/success[snippets="http-response"]
+--
+
+실패 응답::
++
+--
+operation::Account login/failed[snippets="http-response"]
+--
+======
 
 === 계정 중복 검사
 [NOTE]
@@ -40,8 +57,22 @@
 
 사용자 계정(ID 또는 이메일)이 중복되는지 확인 가능
 
-operation::Account duplicate check/success[snippets="http-request,http-response"]
+operation::Account duplicate check/success[snippets="http-request]
+
+[tabs]
+======
+성공 응답::
++
+--
+operation::Account duplicate check/success[snippets="http-response"]
+--
+
+실패 응답::
++
+--
 operation::Account duplicate check/failed[snippets="http-response"]
+--
+======
 
 ---
 
