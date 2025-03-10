@@ -7,14 +7,14 @@
 :source-highlighter: highlightjs
 :sectanchors:
 :sectnums:
-:snippets: ./target/generated-snippets
+:snippets: {snippets}
 :operation-http-request-title: 🔹 요청 예시
 :operation-http-response-title: 🔸 응답 예시
 
 ++++
 <style>
 #toc a {
-    color: #FFFFFF !important; /* 주황색 */
+    color: #000000 !important; /* 검정색 */
     text-decoration: none;
 }
 #toc a:hover {
@@ -73,6 +73,46 @@ operation::Account duplicate check/success[snippets="http-response"]
 operation::Account duplicate check/failed[snippets="http-response"]
 --
 ======
+
+=== Access Token 재발행
+[NOTE]
+**METHOD**: `POST` +
+**URI**: /api/v1/auth/refresh
+
+Refresh Token을 통해서 Access Token 재발행
+
+operation::Token refresh/success[snippets="http-request"]
+
+[tabs]
+======
+성공 응답::
++
+--
+operation::Token refresh/success[snippets="http-response"]
+--
+
+실패 응답::
++
+--
+operation::Token refresh/failed[snippets="http-response"]
+--
+======
+
+=== 회원가입
+[NOTE]
+**METHOD**: `POST` +
+**URI**: /api/v1/auth/signup
+
+Refresh Token을 통해서 Access Token 재발행
+
+==== 성공예시
+
+operation::Sign up/success[snippets="http-request"]
+operation::Sign up/success[snippets="http-response"]
+
+==== 실패 예시
+
+operation::Sign up/failed[snippets="http-request,http-response"]
 
 ---
 
