@@ -35,4 +35,11 @@ public class User {
     private int accountType;
 
     private String role;
+
+    @PrePersist
+    public void prePersist() {
+        if(this.role == null) {
+            this.role = "GUEST";
+        }
+    }
 }
