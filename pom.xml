@@ -145,7 +145,7 @@
 							<resources>
 								<resource>
 									<directory>
-										${project.build.directory}/generated=docs
+										${project.build.directory}/generated-docs
 									</directory>
 								</resource>
 							</resources>
