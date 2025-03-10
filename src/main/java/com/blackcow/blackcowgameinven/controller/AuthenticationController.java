@@ -17,6 +17,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
@@ -59,7 +61,9 @@ public class AuthenticationController {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             String newAccessToken = jwtService.generateAccessToken(authentication);
 
-            return ResponseEntity.ok(new JwtToken(newAccessToken, refreshToken));
+            return ResponseEntity.ok(ApiResponse.builder("Refresh Token")
+                    .data(new JwtToken(newAccessToken, refreshToken))
+                    .build());
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.builder("만료된 토큰입니다.").build());
@@ -73,15 +77,22 @@ public class AuthenticationController {
         return ResponseEntity.ok(ApiResponse.builder("사용가능한 게정").build());
     }
 
-    @PostMapping("signup")
+    @PostMapping(value = "signup", produces = "application/json")
     public ResponseEntity<?> signUp(@RequestBody UserDTO userDTO){
         try{
             userService.createuser(userDTO);
+        }catch (SQLException ex){
+            log.error(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.builder(ex.getMessage()).build());
+        }catch (IllegalArgumentException iex){
+            log.error(iex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.builder("잘못된 비밀번호 입니다.").build());
         }catch (Exception ex){
             log.error(ex.getMessage());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.builder("중복계정 오류").build());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.builder(ex.getMessage()).build());
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.<String>builder("회원가입 성공")
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.builder("회원가입 성공")
                 .data(userDTO.getUsername())
                 .build());
     }

@@ -3,6 +3,7 @@ package com.blackcow.blackcowgameinven.service;
 import com.blackcow.blackcowgameinven.dto.UserDTO;
 import com.blackcow.blackcowgameinven.model.User;
 import com.blackcow.blackcowgameinven.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -36,7 +38,7 @@ public class UserService {
         return userRepository.existsUserByUsername(username);
     }
 
-    public void createuser(UserDTO userDTO) throws SQLException{
+    public void createuser(UserDTO userDTO) throws RuntimeException, SQLException, IllegalArgumentException{
         //2차 중복검증
         if(duplicationCheck(userDTO.getUsername())){
             throw new RuntimeException("중복된 계정입니다.");
