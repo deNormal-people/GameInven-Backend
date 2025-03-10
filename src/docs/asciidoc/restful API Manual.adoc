@@ -1,0 +1,135 @@
+= 🚀 GameInven API 명세서
+:toc: left
+:toclevels: 2
+:toc-title: 🚩 API 목차
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:sectanchors:
+:sectnums:
+:snippets: {snippets}
+:operation-http-request-title: 🔹 요청 예시
+:operation-http-response-title: 🔸 응답 예시
+
+++++
+<style>
+#toc a {
+    color: #000000 !important; /* 검정색 */
+    text-decoration: none;
+}
+#toc a:hover {
+    color: SKYBLUE !important; /* 호버 시 분홍색 */
+}
+</style>
+++++
+
+== 계정 관리 API
+
+=== 로그인
+[NOTE]
+**METHOD**: 'POST' +
+**URI**: /api/v1/auth/login
+
+사용자 계정을 입력하여 Refresh Token과 Access Token을 가져온다.
+
+==== 🔹 요청 예시
+operation::Account login/success[snippets="http-request"]
+
+[tabs]
+======
+성공 응답::
++
+--
+operation::Account login/success[snippets="http-response"]
+--
+
+실패 응답::
++
+--
+operation::Account login/failed[snippets="http-response"]
+--
+======
+
+=== 계정 중복 검사
+[NOTE]
+**METHOD**: `POST` +
+**URI**: /api/v1/auth/duple
+
+사용자 계정(ID 또는 이메일)이 중복되는지 확인 가능
+
+operation::Account duplicate check/success[snippets="http-request]
+
+[tabs]
+======
+성공 응답::
++
+--
+operation::Account duplicate check/success[snippets="http-response"]
+--
+
+실패 응답::
++
+--
+operation::Account duplicate check/failed[snippets="http-response"]
+--
+======
+
+=== Access Token 재발행
+[NOTE]
+**METHOD**: `POST` +
+**URI**: /api/v1/auth/refresh
+
+Refresh Token을 통해서 Access Token 재발행
+
+operation::Token refresh/success[snippets="http-request"]
+
+[tabs]
+======
+성공 응답::
++
+--
+operation::Token refresh/success[snippets="http-response"]
+--
+
+실패 응답::
++
+--
+operation::Token refresh/failed[snippets="http-response"]
+--
+======
+
+=== 회원가입
+[NOTE]
+**METHOD**: `POST` +
+**URI**: /api/v1/auth/signup
+
+Refresh Token을 통해서 Access Token 재발행
+
+==== 성공예시
+
+operation::Sign up/success[snippets="http-request"]
+operation::Sign up/success[snippets="http-response"]
+
+==== 실패 예시
+
+operation::Sign up/failed[snippets="http-request,http-response"]
+
+---
+
+[WARNING]
+====
+📌 **주의사항**
+
+- 모든 API는 기본적으로 JSON 형식으로 요청 및 응답합니다.
+- API 요청 시 인증이 필요한 경우, 요청 헤더에 반드시 `Authorization: Bearer {accessToken}`을 포함해야 합니다.
+====
+
+[IMPORTANT]
+====
+🔐 **보안 관련**
+
+- Access Token의 유효기간(5분)은 짧으므로 만료 시 Refresh Token(7일)을 통해 갱신하세요.
+- Refresh Token은 안전하게 보관하고, 클라이언트 코드에 노출되지 않도록 합니다.
+====
+
+---
