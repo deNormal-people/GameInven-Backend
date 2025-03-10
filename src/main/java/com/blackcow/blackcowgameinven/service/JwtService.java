@@ -32,7 +32,7 @@ public class JwtService {
      * @return 신규 Access 토큰 값
      */
     public String generateAccessToken(Authentication authentication) {
-        return generateToken(authentication, 1000 * 60 * 60);          // 1시간
+        return generateToken(authentication, 1000 * 60 * 5);          // 5분
     }
 
     /***

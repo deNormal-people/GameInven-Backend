@@ -128,7 +128,7 @@ operation::Sign up/failed[snippets="http-request,http-response"]
 ====
 🔐 **보안 관련**
 
-- Access Token의 유효기간은 짧으므로 만료 시 Refresh Token을 통해 갱신하세요.
+- Access Token의 유효기간(5분)은 짧으므로 만료 시 Refresh Token(7일)을 통해 갱신하세요.
 - Refresh Token은 안전하게 보관하고, 클라이언트 코드에 노출되지 않도록 합니다.
 ====
 
