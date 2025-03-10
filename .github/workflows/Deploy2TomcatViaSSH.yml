@@ -31,8 +31,8 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Build with Maven (Skip Tests)
-      run: mvn clean package -DskipTests
+    - name: Build with Maven
+      run: mvn clean package
 
     - name: Rename WAR file to app.war
       run: mv target/*.war target/app.war
