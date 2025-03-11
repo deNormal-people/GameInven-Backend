@@ -51,6 +51,8 @@ public class SecurityConfig{
                             .requestMatchers("/api/v1/users/*", "/login/oauth2/code/*", "/docs/*").permitAll()          //토큰발행전 인증관련 모든부분은 인증이 필요없음
                             .anyRequest().authenticated();
                 })
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
                 //OAuth 로그인
                 .oauth2Login(oauth ->
                         oauth
