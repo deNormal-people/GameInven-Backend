@@ -28,8 +28,9 @@ public class JwtService {
     private SecretKey secretKey;
     private final String issuer = "blackcow-inven";
 
-    //모든 DI가 완료된 후 실행
-    @PostConstruct
+
+    //jwtSecret 주입 순서 보장안됨
+    @PostConstruct          //jwtSecret 값 주입이 완료된 후 실행
     public void init() {
         secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
