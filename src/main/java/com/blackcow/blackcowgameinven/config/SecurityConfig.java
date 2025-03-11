@@ -1,5 +1,6 @@
 package com.blackcow.blackcowgameinven.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,7 +49,7 @@ public class SecurityConfig{
                 //request 검증규칙
                 .authorizeHttpRequests((authorizeRequests) -> {
                     authorizeRequests
-                            .requestMatchers("/api/v1/users/*", "/login/oauth2/code/*", "/docs/*").permitAll()          //토큰발행전 인증관련 모든부분은 인증이 필요없음
+                            .requestMatchers("/api/v1/users/*", "/login/oauth2/code/*", "/docs/**").permitAll()          //토큰발행전 인증관련 모든부분은 인증이 필요없음
                             .anyRequest().authenticated();
                 })
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -59,7 +60,12 @@ public class SecurityConfig{
                                 //로그인 성공시 회원가입/JWT 토큰 발급(로그인) 및 리다이렉션
                                 .successHandler(loginSuccessHandler)
                 )
-                .oauth2Client(Customizer.withDefaults())            //Google OAuth2
+                //.oauth2Client(Customizer.withDefaults())              //OAuth2로그인 후 사용안함
+                .exceptionHandling(exception ->
+                        exception.authenticationEntryPoint((request, response, authException) -> {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                        })  //인증 실패 시 401 반환 (리디렉트 방지)
+                )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
