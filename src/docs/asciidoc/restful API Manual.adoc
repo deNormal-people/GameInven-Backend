@@ -57,7 +57,7 @@ operation::Account login/failed[snippets="http-response"]
 
 사용자 계정(ID 또는 이메일)이 중복되는지 확인 가능
 
-operation::Account duplicate check/success[snippets="http-request]
+operation::Account duplicate check/success[snippets="http-request"]
 
 [tabs]
 ======
