@@ -48,7 +48,7 @@ public class SecurityConfig{
                 //request 검증규칙
                 .authorizeHttpRequests((authorizeRequests) -> {
                     authorizeRequests
-                            .requestMatchers("/api/auth/**", "/login/oauth2/code/*", "/").permitAll()          //토큰발행전 인증관련 모든부분은 인증이 필요없음
+                            .requestMatchers("/api/v1/users/*", "/login/oauth2/code/*", "/docs/*").permitAll()          //토큰발행전 인증관련 모든부분은 인증이 필요없음
                             .anyRequest().authenticated();
                 })
                 //OAuth 로그인
