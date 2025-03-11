@@ -14,6 +14,9 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * JWT관련 로직
+ */
 @Service
 public class JwtService {
 
@@ -21,6 +24,7 @@ public class JwtService {
     private String jwtSecret;
     private SecretKey secretKey;
 
+    //모든 DI가 완료된 후 실행
     @PostConstruct
     public void init() {
         secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
