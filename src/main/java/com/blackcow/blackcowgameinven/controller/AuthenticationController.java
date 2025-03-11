@@ -40,7 +40,7 @@ public class AuthenticationController {
                     new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
             );
 
-            return authorizationService.generateTokenResponse(authentication); // ✅ 공통 로직 호출
+            return authorizationService.generateTokenResponse(authentication);
 
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
