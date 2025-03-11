@@ -2,7 +2,7 @@ package com.blackcow.blackcowgameinven.UserTest;
 
 import com.blackcow.blackcowgameinven.model.User;
 import com.blackcow.blackcowgameinven.repository.UserRepository;
-import com.blackcow.blackcowgameinven.service.UserService;
+import com.blackcow.blackcowgameinven.service.AuthorizationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ public class UserRepositoryTest {
     private UserRepository userRepository;
 
     @MockitoBean
-    private UserService userService;
+    private AuthorizationService authorizationService;
 
     @BeforeEach
     void setUp() {
@@ -54,7 +54,7 @@ public class UserRepositoryTest {
     @DisplayName("중복체크")
     void 중복체크(){
         //중복됨
-        assertEquals(false, userService.duplicationCheck("asdf"));
+        assertEquals(false, authorizationService.duplicationCheck("asdf"));
     }
 
 }

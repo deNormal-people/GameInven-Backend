@@ -1,9 +1,8 @@
 package com.blackcow.blackcowgameinven.end2endtest;
 
 import com.blackcow.blackcowgameinven.dto.UserDTO;
-import com.blackcow.blackcowgameinven.model.User;
 import com.blackcow.blackcowgameinven.repository.UserRepository;
-import com.blackcow.blackcowgameinven.service.UserService;
+import com.blackcow.blackcowgameinven.service.AuthorizationService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -44,7 +43,7 @@ public class UserEndToEndTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private UserService userService;
+    private AuthorizationService authorizationService;
 
 
     @BeforeEach
@@ -59,7 +58,7 @@ public class UserEndToEndTest {
     void setUp() throws SQLException {
         String userName = "test";
 
-        userService.createuser(new UserDTO(userName, userName, "",""));
+        authorizationService.createuser(new UserDTO(userName, userName, "",""));
     }
 
     @Test
@@ -128,7 +127,7 @@ public class UserEndToEndTest {
     public void 중복체크API_실패() throws Exception {
         String requestBody = "{\"username\": \"duplicationUser\"}";
 
-        userService.createuser(new UserDTO("duplicationUser", "duplicationUser", "", ""));
+        authorizationService.createuser(new UserDTO("duplicationUser", "duplicationUser", "", ""));
 
         this.mockMvc.perform(post("/api/v1/users/check-duplicate")
                         .contentType(MediaType.APPLICATION_JSON)

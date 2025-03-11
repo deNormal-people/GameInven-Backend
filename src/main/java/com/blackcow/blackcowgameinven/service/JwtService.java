@@ -1,5 +1,6 @@
 package com.blackcow.blackcowgameinven.service;
 
+import com.blackcow.blackcowgameinven.Constants.TokenExpirationTime;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -14,6 +15,8 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.List;
 
+import static javax.crypto.Cipher.SECRET_KEY;
+
 /**
  * JWT관련 로직
  */
@@ -23,6 +26,7 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String jwtSecret;
     private SecretKey secretKey;
+    private final String issuer = "blackcow-inven";
 
     //모든 DI가 완료된 후 실행
     @PostConstruct
@@ -36,7 +40,7 @@ public class JwtService {
      * @return 신규 Access 토큰 값
      */
     public String generateAccessToken(Authentication authentication) {
-        return generateToken(authentication, 1000 * 60 * 5);          // 5분
+        return generateToken(authentication, TokenExpirationTime.ACCESS_TOKEN.getExpirationTime());          // 5분
     }
 
     /***
@@ -45,7 +49,7 @@ public class JwtService {
      * @return 신규 Refresh 토큰 값
      */
     public String generateRefreshToken(Authentication authentication) {
-        return generateToken(authentication, 1000 * 60 * 60 * 24 * 7);      // 1주일
+        return generateToken(authentication, TokenExpirationTime.REFRESH_TOKEN.getExpirationTime());      // 1주일
     }
 
     /**
@@ -80,6 +84,7 @@ public class JwtService {
         return Jwts.builder()
                 .subject(email)
                 .issuedAt(new Date())
+                .issuer(issuer)
                 .expiration(expiryDate)
                 .signWith(secretKey, Jwts.SIG.HS256)
                 .claim("roles", roles) // ✅ 역할 정보 추가
@@ -139,6 +144,44 @@ public class JwtService {
             // 그 밖의 오류
         }
         return null;
+    }
+
+    public boolean isValidToken(String token) {
+        try {
+            Claims claims = getValidateToken(token);
+
+            // 토큰이 null이면 유효하지 않음
+            if (claims == null) {
+                return false;
+            }
+
+            // 토큰 만료 여부 확인
+            if (claims.getExpiration().before(new Date())) {
+                return false;
+            }
+
+            // 발급자 검증 (Issuer)
+            if (!issuer.equals(claims.getIssuer())) {
+                return false;
+            }
+
+            // 토큰이 블랙리스트에 포함되었는지 확인 (로그아웃된 토큰인지 체크)
+            /*if (userService.isTokenBlacklisted(token)) {
+                return false;
+            }*/
+
+            return true;
+        } catch (ExpiredJwtException e) {
+            System.out.println("토큰이 만료되었습니다.");
+        } catch (MalformedJwtException e) {
+            System.out.println("토큰 형식이 잘못되었습니다.");
+        } catch (SignatureException e) {
+            System.out.println("서명 검증에 실패하였습니다.");
+        } catch (Exception e) {
+            System.out.println("토큰 검증 중 오류 발생: " + e.getMessage());
+        }
+
+        return false;
     }
 
 }
