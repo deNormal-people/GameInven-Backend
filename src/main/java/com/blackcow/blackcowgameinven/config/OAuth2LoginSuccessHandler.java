@@ -1,5 +1,6 @@
 package com.blackcow.blackcowgameinven.config;
 
+import com.blackcow.blackcowgameinven.Constants.OAuth2EmailCode;
 import com.blackcow.blackcowgameinven.dto.JwtToken;
 import com.blackcow.blackcowgameinven.dto.UserDTO;
 import com.blackcow.blackcowgameinven.service.JwtService;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.Map;
 
 @Component
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -39,7 +42,17 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             throws IOException, ServletException {
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        String email = oAuth2User.getAttribute("email");
+        String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
+        String email =
+                switch (registrationId){
+                    case "google" -> oAuth2User.getAttribute(OAuth2EmailCode.GOOGLE.getEmailCode());
+                    case "kakao" -> {
+                        Map<String, Object> kakaoAccount = oAuth2User.getAttribute(OAuth2EmailCode.KAKAO.getEmailCode());
+                        yield kakaoAccount != null? (String)kakaoAccount.get("email"):null;
+                    }
+                    default -> null;
+                };
+        oAuth2User.getAttribute("email");
 
         //기존 사용자 인지 조회
         try {
