@@ -21,7 +21,7 @@ import java.sql.SQLException;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/users")
 public class AuthenticationController {
 
     @Autowired
@@ -69,7 +69,7 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.builder("만료된 토큰입니다.").build());
     }
 
-    @PostMapping(value = "/dupl", produces = "application/json")
+    @PostMapping(value = "/check-duplicate", produces = "application/json")
     public ResponseEntity<?> dupleCheck(@RequestBody UserDTO userDTO) {
         if(userService.duplicationCheck(userDTO.getUsername())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.builder("중복된 계정").build());
