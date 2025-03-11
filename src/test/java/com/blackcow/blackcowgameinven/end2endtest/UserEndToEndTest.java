@@ -3,8 +3,7 @@ package com.blackcow.blackcowgameinven.end2endtest;
 import com.blackcow.blackcowgameinven.dto.UserDTO;
 import com.blackcow.blackcowgameinven.repository.UserRepository;
 import com.blackcow.blackcowgameinven.service.AuthorizationService;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +23,6 @@ import java.sql.SQLException;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -195,18 +193,11 @@ public class UserEndToEndTest {
                 .andReturn();
 
         // 3. 로그인 응답에서 Refresh Token 추출
-        String refreshToken = loginResult.getResponse().getCookie("refreshToken").getValue();
-
-        // 4. 토큰 갱신 요청
-        String requestBody = String.format("""
-            {
-                "refreshToken": "%s"
-            }
-            """, refreshToken);
+        Cookie refreshTokenCookie = loginResult.getResponse().getCookie("refreshToken");
 
         mockMvc.perform(post("/api/v1/users/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+                        .cookie(refreshTokenCookie))
                 .andExpect(status().isOk()) // 200 OK 예상
                 .andDo(document("Token refresh/success",
                         preprocessRequest(prettyPrint()),
@@ -217,15 +208,11 @@ public class UserEndToEndTest {
     @DisplayName("토큰 갱신 - 실패")
     public void Access_Token재발행_실패() throws Exception {
 
-        String requestBody = """
-                {
-                    "refreshToken": "eyJhbGcJIUzI1NiJ9.eyJzdWIiOiJndWVzdCIsImlhdCI6MTc0MTU4MzkzNywiZXhwIjoxNzQyMTg4NzM3LCJyb2xlcyI6WyJHVUVTVCJdfQ.U7wsvvhjgrjPuop1WCTAGI87jBxp6OQ9Agb2VNXOo3g"
-                }
-                """;
+        Cookie refreshTokenCookie = new Cookie("refreshToken", "eyJhbGcJIUzI1NiJ9.eyJzdWIiOiJndWVzdCIsImlhdCI6MTc0MTU4MzkzNywiZXhwIjoxNzQyMTg4NzM3LCJyb2xlcyI6WyJHVUVTVCJdfQ.U7wsvvhjgrjPuop1WCTAGI87jBxp6OQ9Agb2VNXOo3g");
 
         this.mockMvc.perform(post("/api/v1/users/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+                        .cookie(refreshTokenCookie))
                 .andExpect(status().isUnauthorized())             //401 UnAuthorized
                 .andDo(document("Token refresh/failed",
                         preprocessRequest(prettyPrint()),

@@ -75,15 +75,15 @@ public class AuthorizationService {
         // ✅ refresh token을 HttpOnly Secure Cookie에 저장
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)   // JavaScript 접근 차단 (XSS 방어)
-                .secure(true)     // HTTPS에서만 전송
+                .secure(false)     // HTTPS에서만 전송
                 .path("/")        // 모든 경로에서 접근 가능
                 .maxAge(TokenExpirationTime.REFRESH_TOKEN.getExpirationTime()) // 7일간 유지
                 .sameSite("Strict") // CSRF 공격 방어
                 .build();
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)  // ✅ Access Token을 응답 헤더에 포함
-                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString()) // ✅ Refresh Token을 HttpOnly Secure 쿠키로 설정
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)  // Access Token을 응답 헤더에 포함
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString()) // Refresh Token을 HttpOnly Secure 쿠키로 설정
                 .build();
     }
 
