@@ -75,7 +75,7 @@ public class UserEndToEndTest {
                 }
                 """;
 
-        this.mockMvc.perform(post("/api/auth/signup")
+        this.mockMvc.perform(post("/api/v1/users/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isCreated())
@@ -96,7 +96,7 @@ public class UserEndToEndTest {
                 }
                 """;
 
-        this.mockMvc.perform(post("/api/auth/signup")
+        this.mockMvc.perform(post("/api/v1/users/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
@@ -108,10 +108,13 @@ public class UserEndToEndTest {
     @Test
     @DisplayName("중복체크 - 성공 응답")
     public void 중복체크API_성공() throws Exception {
-        String requestBody = "{\"username\": \"uniqueUser\"}";
+        String requestBody = """
+                        {
+                            "username": "uniqueUser"
+                        }
+                """;
 
-
-        this.mockMvc.perform(post("/api/auth/dupl")
+        this.mockMvc.perform(post("/api/v1/users/check-duplicate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk())             //200 OK
@@ -125,9 +128,9 @@ public class UserEndToEndTest {
     public void 중복체크API_실패() throws Exception {
         String requestBody = "{\"username\": \"duplicationUser\"}";
 
-        userRepository.save(User.builder().username("duplicationUser").password("duplicationUser").build());
+        userService.createuser(new UserDTO("duplicationUser", "duplicationUser", "", ""));
 
-        this.mockMvc.perform(post("/api/auth/dupl")
+        this.mockMvc.perform(post("/api/v1/users/check-duplicate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isConflict())             //409 conflict
@@ -147,7 +150,7 @@ public class UserEndToEndTest {
                 }
                 """;
 
-        this.mockMvc.perform(post("/api/auth/login")
+        this.mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk())             //409 conflict
@@ -167,7 +170,7 @@ public class UserEndToEndTest {
                 }
                 """;
 
-        this.mockMvc.perform(post("/api/auth/login")
+        this.mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isUnauthorized())             //401 UnAuthorized
@@ -186,7 +189,7 @@ public class UserEndToEndTest {
             }
             """;
 
-        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
+        MvcResult loginResult = mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(loginRequest))
                 .andExpect(status().isOk())
@@ -205,7 +208,7 @@ public class UserEndToEndTest {
             }
             """, refreshToken);
 
-        mockMvc.perform(post("/api/auth/refresh")
+        mockMvc.perform(post("/api/v1/users/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk()) // 200 OK 예상
@@ -224,7 +227,7 @@ public class UserEndToEndTest {
                 }
                 """;
 
-        this.mockMvc.perform(post("/api/auth/refresh")
+        this.mockMvc.perform(post("/api/v1/users/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isUnauthorized())             //401 UnAuthorized
