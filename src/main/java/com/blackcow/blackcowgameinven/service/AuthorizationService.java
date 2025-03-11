@@ -30,6 +30,7 @@ public class AuthorizationService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
     private JwtService jwtService;
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

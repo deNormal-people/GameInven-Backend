@@ -195,10 +195,7 @@ public class UserEndToEndTest {
                 .andReturn();
 
         // 3. 로그인 응답에서 Refresh Token 추출
-        String jsonResponse = loginResult.getResponse().getContentAsString();
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(jsonResponse);
-        String refreshToken = jsonNode.get("refreshToken").asText();
+        String refreshToken = loginResult.getResponse().getCookie("refreshToken").getValue();
 
         // 4. 토큰 갱신 요청
         String requestBody = String.format("""
