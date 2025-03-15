@@ -1,11 +1,9 @@
 package com.blackcow.blackcowgameinven.end2endtest;
 
 import com.blackcow.blackcowgameinven.dto.UserDTO;
-import com.blackcow.blackcowgameinven.model.User;
 import com.blackcow.blackcowgameinven.repository.UserRepository;
-import com.blackcow.blackcowgameinven.service.UserService;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.blackcow.blackcowgameinven.service.AuthorizationService;
+import jakarta.servlet.http.Cookie;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +23,6 @@ import java.sql.SQLException;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,7 +41,7 @@ public class UserEndToEndTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private UserService userService;
+    private AuthorizationService authorizationService;
 
 
     @BeforeEach
@@ -59,7 +56,7 @@ public class UserEndToEndTest {
     void setUp() throws SQLException {
         String userName = "test";
 
-        userService.createuser(new UserDTO(userName, userName, "",""));
+        authorizationService.createuser(new UserDTO(userName, userName, "",""));
     }
 
     @Test
@@ -128,7 +125,7 @@ public class UserEndToEndTest {
     public void 중복체크API_실패() throws Exception {
         String requestBody = "{\"username\": \"duplicationUser\"}";
 
-        userService.createuser(new UserDTO("duplicationUser", "duplicationUser", "", ""));
+        authorizationService.createuser(new UserDTO("duplicationUser", "duplicationUser", "", ""));
 
         this.mockMvc.perform(post("/api/v1/users/check-duplicate")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -196,21 +193,11 @@ public class UserEndToEndTest {
                 .andReturn();
 
         // 3. 로그인 응답에서 Refresh Token 추출
-        String jsonResponse = loginResult.getResponse().getContentAsString();
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(jsonResponse);
-        String refreshToken = jsonNode.get("refreshToken").asText();
-
-        // 4. 토큰 갱신 요청
-        String requestBody = String.format("""
-            {
-                "refreshToken": "%s"
-            }
-            """, refreshToken);
+        Cookie refreshTokenCookie = loginResult.getResponse().getCookie("refreshToken");
 
         mockMvc.perform(post("/api/v1/users/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+                        .cookie(refreshTokenCookie))
                 .andExpect(status().isOk()) // 200 OK 예상
                 .andDo(document("Token refresh/success",
                         preprocessRequest(prettyPrint()),
@@ -221,15 +208,11 @@ public class UserEndToEndTest {
     @DisplayName("토큰 갱신 - 실패")
     public void Access_Token재발행_실패() throws Exception {
 
-        String requestBody = """
-                {
-                    "refreshToken": "eyJhbGcJIUzI1NiJ9.eyJzdWIiOiJndWVzdCIsImlhdCI6MTc0MTU4MzkzNywiZXhwIjoxNzQyMTg4NzM3LCJyb2xlcyI6WyJHVUVTVCJdfQ.U7wsvvhjgrjPuop1WCTAGI87jBxp6OQ9Agb2VNXOo3g"
-                }
-                """;
+        Cookie refreshTokenCookie = new Cookie("refreshToken", "eyJhbGcJIUzI1NiJ9.eyJzdWIiOiJndWVzdCIsImlhdCI6MTc0MTU4MzkzNywiZXhwIjoxNzQyMTg4NzM3LCJyb2xlcyI6WyJHVUVTVCJdfQ.U7wsvvhjgrjPuop1WCTAGI87jBxp6OQ9Agb2VNXOo3g");
 
         this.mockMvc.perform(post("/api/v1/users/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+                        .cookie(refreshTokenCookie))
                 .andExpect(status().isUnauthorized())             //401 UnAuthorized
                 .andDo(document("Token refresh/failed",
                         preprocessRequest(prettyPrint()),

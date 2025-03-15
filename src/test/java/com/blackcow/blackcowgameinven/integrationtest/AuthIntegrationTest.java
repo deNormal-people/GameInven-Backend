@@ -3,12 +3,11 @@ package com.blackcow.blackcowgameinven.integrationtest;
 import com.blackcow.blackcowgameinven.dto.UserDTO;
 import com.blackcow.blackcowgameinven.model.User;
 import com.blackcow.blackcowgameinven.repository.UserRepository;
-import com.blackcow.blackcowgameinven.service.UserService;
+import com.blackcow.blackcowgameinven.service.AuthorizationService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.sql.SQLException;
@@ -22,7 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class AuthIntegrationTest {
 
     @Autowired
-    private UserService userService;
+    private AuthorizationService authorizationService;
 
     @Autowired
     private UserRepository userRepository;
@@ -32,7 +31,7 @@ public class AuthIntegrationTest {
 
         String userName = "asdf";
 
-        boolean result = userService.duplicationCheck(userName);
+        boolean result = authorizationService.duplicationCheck(userName);
 
         assertThat(result).isFalse();
     }
@@ -44,7 +43,7 @@ public class AuthIntegrationTest {
 
         userRepository.save(User.builder().username(userName).password(userName).build());
 
-        boolean result = userService.duplicationCheck(userName);
+        boolean result = authorizationService.duplicationCheck(userName);
 
         assertThat(result).isTrue();
     }
@@ -53,7 +52,7 @@ public class AuthIntegrationTest {
     public void 회원가입() throws SQLException, RuntimeException {
         UserDTO user = new UserDTO("test", "test", "","");
 
-        userService.createuser(user);
+        authorizationService.createuser(user);
 
         List<User> userList = userRepository.findAll();
 
