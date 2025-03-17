@@ -58,8 +58,14 @@ jobs:
     - name: Build JAR
       run: mvn clean package -DskipTests=true
 
-    - name: Move JAR to root
+    - name: Move JAR to root as app.jar
       run: cp target/*.jar ./app.jar
+
+    - name: Upload app.jar as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-jar
+        path: app.jar
 
   # ====== DEPLOY ======
   Deploy:
@@ -69,6 +75,12 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
+
+    - name: Download app.jar artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: app-jar
+        path: .
 
     - name: Set up SSH Agent
       uses: webfactory/ssh-agent@v0.9.0
