@@ -65,8 +65,10 @@ jobs:
 
       - name: Rsync selected files to Server
         run: |
-          rsync -e "ssh -p 21" -avz app.jar Dockerfile docker-compose.yml \
+          rsync -e "ssh -p 21" -avz --rsync-path="mkdir -p '${{ secrets.SERVER_PATH }}' && rsync" \
+          app.jar Dockerfile docker-compose.yml \
           ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:"${{ secrets.SERVER_PATH }}/"
+
 
       - name: Deploy on Server
         run: |
