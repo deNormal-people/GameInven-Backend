@@ -2,7 +2,8 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [Prob] # or master, develop 등 원하는 브랜치
+    branches:
+      - Prod
 
 jobs:
   deploy:
