@@ -100,4 +100,3 @@ jobs:
       run: |
         ssh -p 21 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} \
         "cd ${{ secrets.SERVER_PATH }} && docker compose down && docker compose up -d --build"
-
