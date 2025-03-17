@@ -36,3 +36,7 @@ build/
 **/application.properties
 **/application.yml
 **/application-*.yml
+
+
+### Docker ###
+docker-compose.yml
