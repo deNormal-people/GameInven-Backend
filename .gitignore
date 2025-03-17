@@ -39,4 +39,4 @@ build/
 
 
 ### Docker ###
-docker-compose.yml
+*-compose.yml
