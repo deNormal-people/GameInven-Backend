@@ -78,6 +78,10 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.DEPLOY_KEY }}
 
+    - name: Add server to known_hosts
+      run: |
+        ssh-keyscan -p 21 ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
     - name: Rsync to Server
       run: |
         rsync -e "ssh -p 21" -avz --exclude '.git' --exclude 'node_modules' --exclude 'target' ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.SERVER_PATH }}
