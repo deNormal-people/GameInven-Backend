@@ -19,6 +19,10 @@ jobs:
           mkdir -p src/main/resources
           echo -e "${{ secrets.APPLICATION_TEST_YML }}" > src/main/resources/application-test.yml
 
+      - name: Create application.yml for build
+        run: |
+          echo -e "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -65,11 +69,11 @@ jobs:
 
       - name: Rsync selected files to Server
         run: |
-          rsync -e "ssh -p 21" -avz app.jar Dockerfile docker-compose.yml \ 
+          rsync -e "ssh -p 21" -avz --rsync-path="mkdir -p '${{ secrets.SERVER_DIR_PATH }}' && rsync" \
+          app.jar Dockerfile docker-compose.yml \
           ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:"${{ secrets.SERVER_DIR_PATH }}/"
-
 
       - name: Deploy on Server
         run: |
           ssh -p 21 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} \
-          "cd '${{ secrets.SERVER_PATH }}' && docker compose down && docker compose up -d --build"
+          "cd '${{ secrets.SERVER_DIR_PATH }}' && docker compose down && docker compose up -d --build"
