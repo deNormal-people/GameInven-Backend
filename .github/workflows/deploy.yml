@@ -2,7 +2,8 @@ name: CI/CD Pipeline - Docker
 
 on:
   push:
-    branches: [Prob]
+    branches:
+      - Prob
 
 jobs:
   Test:
