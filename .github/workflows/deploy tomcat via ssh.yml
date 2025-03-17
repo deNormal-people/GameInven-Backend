@@ -32,6 +32,13 @@ jobs:
     - name: Run tests with Maven
       run: mvn test
 
+    #artifact 스니펫 업로드
+    - name: Upload generated-snippets
+      uses: actions/upload-artifact@v3
+      with:
+        name: generated-snippets
+        path: target/generated-snippets
+
   build:
     runs-on: ubuntu-latest
     needs: test  # test 성공 후 실행됨
@@ -39,6 +46,13 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+
+    #artifact에 업로드된 스니펫들을 받아옴
+    - name: Download generated-snippets
+      uses: actions/download-artifact@v3
+      with:
+        name: generated-snippets
+        path: target/generated-snippets
 
     - name: Create application.yml
       run: |
