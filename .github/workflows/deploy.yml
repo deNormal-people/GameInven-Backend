@@ -58,6 +58,10 @@ jobs:
           name: app-jar
           path: .
 
+      - name: Create docker-compose.yml for deploy
+        run: |
+          echo -e "${{ secrets.DOCKER_COMPOSE }}" > ./docker-compose.yml
+
       - name: Set up SSH Agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
