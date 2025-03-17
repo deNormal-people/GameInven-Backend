@@ -142,7 +142,7 @@
 				<executions>
 					<execution>
 						<id>copy-resource</id>
-						<phase>prepare-package</phase>
+						<phase>verify</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>

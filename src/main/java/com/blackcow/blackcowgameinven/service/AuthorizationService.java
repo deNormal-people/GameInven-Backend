@@ -72,7 +72,7 @@ public class AuthorizationService {
         String accessToken = jwtService.generateAccessToken(authentication);
         String refreshToken = jwtService.generateRefreshToken(authentication);
 
-        // ✅ refresh token을 HttpOnly Secure Cookie에 저장
+        // refresh token을 HttpOnly Secure Cookie에 저장
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)   // JavaScript 접근 차단 (XSS 방어)
                 .secure(false)     // HTTPS에서만 전송
