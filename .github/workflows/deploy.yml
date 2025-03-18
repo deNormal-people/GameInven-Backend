@@ -80,4 +80,4 @@ jobs:
       - name: Deploy on Server
         run: |
           ssh -p 21 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} \
-          "cd '${{ secrets.SERVER_DIR_PATH }}' && docker compose down && docker compose up -d --build"
+          "cd '${{ secrets.SERVER_DIR_PATH }}' && docker compose -f app-compose.yml down && docker compose -f app-compose.yml up -d --build"
